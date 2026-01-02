@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+
+    stage('Terraform Validate') {
+      steps {
+        dir('deployments/terraform/drift-demo') {
+          sh 'terraform init -input=false'
+          sh 'terraform fmt -check -diff'
+          sh 'terraform validate'
+        }
+      }
+    }
+
+    stage('SLXP Report Gate (Simulated)') {
+      steps {
+        sh '''
+          python3 - << 'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("red-teaming/slxp-probes/Red_Team_Report.json").read_text(encoding="utf-8"))
+          crit = [f for f in data.get("findings", []) if f.get("severity") == "CRITICAL"]
+          if crit:
+            print("CRITICAL findings present:")
+            for f in crit:
+              print(f"- {f.get('id')} :: {f.get('title')}")
+            raise SystemExit(2)
+          print("No CRITICAL findings detected.")
+          PY
+        '''
+      }
+    }
+  }
+  post {
+    always { archiveArtifacts artifacts: 'red-teaming/slxp-probes/*.json', fingerprint: true }
+  }
+}
