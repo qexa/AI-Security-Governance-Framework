@@ -51,34 +51,44 @@ Risk = Probability \times Impact
 
 ```mermaid
 flowchart LR
-  U["User App"] --> GW["AI Gateway / Agent API"]
-  GW --> R["Vector DB / Doc Store"]
-  R --> GW
-  GW --> MG["Model Gateway"]
-  MG --> GW
-  GW --> U
+    %% Core AI Request Flow
+    U["End User / Client App"] --> AG["AI Gateway / Agent API"]
+    AG --> RET["Retrieval Layer<br/>(Vector DB / Document Store)"]
+    RET --> AG
+    AG --> MG["Model Gateway"]
+    MG --> AG
+    AG --> U
 
-  subgraph L1["Layer 1 - Design Time"]
-    TM["Threat Modeling (STRIDE)"]
-  end
+    %% Layer 1: Design-Time Security
+    subgraph L1["Layer 1 — Design-Time Security"]
+        TM["Threat Modeling<br/>(STRIDE for RAG & Agents)"]
+    end
 
-  subgraph L2["Layer 2 - Pre Deploy CI/CD"]
-    CI["CI Gates - IaC Validate + Drift Signals"]
-    RT["Adversarial Probes (SLXP style)"]
-    EV["Evidence artifacts"]
-  end
+    %% Layer 2: Pre-Deployment Enforcement
+    subgraph L2["Layer 2 — Pre-Deployment CI/CD"]
+        CI["CI/CD Security Gates<br/>IaC Validation & Drift Detection"]
+        RT["Adversarial AI Probing<br/>(Prompt Injection, Abuse)"]
+        EV["Security Evidence Artifacts"]
+    end
 
-  subgraph L3["Layer 3 - Runtime"]
-    GA["Galileo Guardrails - Hallucination + PII"]
-    OPA["Policy as Code (OPA/Rego)"]
-  end
+    %% Layer 3: Runtime Governance
+    subgraph L3["Layer 3 — Runtime Governance"]
+        GA["Runtime Guardrails<br/>Hallucination & PII Detection"]
+        OPA["Policy Enforcement<br/>(OPA / Rego)"]
+    end
 
-  TM -.-> CI
-  TM -.-> GA
-  CI --> EV
-  RT --> EV
-  GA --> EV
-  OPA --> GW
+    %% Governance Flow
+    TM -. informs .-> CI
+    TM -. informs .-> GA
+
+    %% Evidence Generation
+    CI --> EV
+    RT --> EV
+    GA --> EV
+
+    %% Runtime Enforcement
+    OPA --> AG
+
 
 ```
 
