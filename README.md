@@ -51,34 +51,35 @@ Risk = Probability \times Impact
 
 ```mermaid
 flowchart LR
-  U[User / App] -->|Prompt| GW[AI Gateway / Agent API]
-  GW -->|Retrieval Query| R[(Vector DB / Doc Store)]
-  R -->|Context| GW
-  GW -->|LLM Call| MG[Model Gateway]
-  MG -->|Response| GW
-  GW -->|Output| U
+  U["User App"] --> GW["AI Gateway / Agent API"]
+  GW --> R["Vector DB / Doc Store"]
+  R --> GW
+  GW --> MG["Model Gateway"]
+  MG --> GW
+  GW --> U
 
-  subgraph Layer1[Layer 1: Design-Time]
-    TM[Threat Modeling (STRIDE)]
+  subgraph L1["Layer 1 - Design Time"]
+    TM["Threat Modeling (STRIDE)"]
   end
 
-  subgraph Layer2[Layer 2: Pre-Deploy CI/CD]
-    CI[CI Gates: IaC Validate + Drift Signals]
-    RT[Adversarial Probes (SLXP-style)]
-    EV[evidence/ artifacts]
+  subgraph L2["Layer 2 - Pre Deploy CI/CD"]
+    CI["CI Gates - IaC Validate + Drift Signals"]
+    RT["Adversarial Probes (SLXP style)"]
+    EV["Evidence artifacts"]
   end
 
-  subgraph Layer3[Layer 3: Runtime]
-    GA[Galileo Guardrails: Hallucination + PII]
-    OPA[Policy-as-Code (OPA/Rego)]
+  subgraph L3["Layer 3 - Runtime"]
+    GA["Galileo Guardrails - Hallucination + PII"]
+    OPA["Policy as Code (OPA/Rego)"]
   end
 
-  TM -. requirements .-> CI
-  TM -. requirements .-> GA
+  TM -.-> CI
+  TM -.-> GA
   CI --> EV
   RT --> EV
   GA --> EV
   OPA --> GW
+
 ```
 
 ### Layer 1 — Design-Time (Left-Shift)
