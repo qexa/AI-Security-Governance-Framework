@@ -49,48 +49,10 @@ Risk = Probability \times Impact
 
 ## Triple-Layer Architecture
 
-```mermaid
-flowchart LR
-    %% Core AI Request Flow
-    U["End User / Client App"] --> AG["AI Gateway / Agent API"]
-    AG --> RET["Retrieval Layer<br/>(Vector DB / Document Store)"]
-    RET --> AG
-    AG --> MG["Model Gateway"]
-    MG --> AG
-    AG --> U
-
-    %% Layer 1: Design-Time Security
-    subgraph L1["Layer 1 — Design-Time Security"]
-        TM["Threat Modeling<br/>(STRIDE for RAG & Agents)"]
-    end
-
-    %% Layer 2: Pre-Deployment Enforcement
-    subgraph L2["Layer 2 — Pre-Deployment CI/CD"]
-        CI["CI/CD Security Gates<br/>IaC Validation & Drift Detection"]
-        RT["Adversarial AI Probing<br/>(Prompt Injection, Abuse)"]
-        EV["Security Evidence Artifacts"]
-    end
-
-    %% Layer 3: Runtime Governance
-    subgraph L3["Layer 3 — Runtime Governance"]
-        GA["Runtime Guardrails<br/>Hallucination & PII Detection"]
-        OPA["Policy Enforcement<br/>(OPA / Rego)"]
-    end
-
-    %% Governance Flow
-    TM -. informs .-> CI
-    TM -. informs .-> GA
-
-    %% Evidence Generation
-    CI --> EV
-    RT --> EV
-    GA --> EV
-
-    %% Runtime Enforcement
-    OPA --> AG
+<img width="1536" height="1024" alt="Triple Layer Ai Sec Architecture" src="https://github.com/user-attachments/assets/48a2eb3a-cdf9-403d-847e-d2dfce9d3533" />
 
 
-```
+
 
 ### Layer 1 — Design-Time (Left-Shift)
 Threat model the RAG agent and convert priority risks into executable requirements.
